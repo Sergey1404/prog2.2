@@ -1,0 +1,2285 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MathParser</name>
+    </assembly>
+    <members>
+        <member name="T:MathParser.EvaluationException">
+            <summary>
+            Exception that occurs during evaluation
+            </summary>
+        </member>
+        <member name="P:MathParser.EvaluationException.InvalidFactor">
+            <summary>
+            Factor that caused the exception
+            </summary>
+        </member>
+        <member name="M:MathParser.EvaluationException.#ctor(System.String)">
+            <summary>
+            Instantiates an EvaluationException
+            </summary>
+            <param name="message">Exception message</param>
+        </member>
+        <member name="M:MathParser.EvaluationException.#ctor(MathParser.ParseTree.NodeBase,System.String)">
+            <summary>
+            Instantiates an EvaluationException
+            </summary>
+            <param name="factor">Factor causing the exception</param>
+            <param name="message">Exception message</param>
+        </member>
+        <member name="M:MathParser.EvaluationException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Gets the object data, inherited from CLR type _Exception
+            </summary>
+            <param name="info">Serialization Info</param>
+            <param name="context">Streaming Context</param>
+        </member>
+        <member name="T:MathParser.Evaluator">
+            <summary>
+            Main class where most parsing is done.
+            Results of each stage are stored in properties of this class.
+            </summary>
+        </member>
+        <member name="P:MathParser.Evaluator.Instance">
+            <summary>
+            Static instance of singleton
+            </summary>
+        </member>
+        <member name="P:MathParser.Evaluator.Input">
+            <summary>
+            Input string from user
+            </summary>
+        </member>
+        <member name="P:MathParser.Evaluator.Lexed">
+            <summary>
+            Token stream used by parser
+            </summary>
+        </member>
+        <member name="P:MathParser.Evaluator.ParseTree">
+            <summary>
+            Root node of parse tree, ready to evaluate
+            </summary>
+        </member>
+        <member name="P:MathParser.Evaluator.Result">
+            <summary>
+            Result value in wrapper
+            </summary>
+        </member>
+        <member name="P:MathParser.Evaluator.ResultValue">
+            <summary>
+            Inner result value, ready to be cast
+            </summary>
+        </member>
+        <member name="M:MathParser.Evaluator.Initialize(System.Boolean,System.Boolean)">
+            <summary>
+            Option for on-demand initialization to prevent sudden lag during evaluation.
+            The calling assembly is loaded via Extensibility unless specified otherwise.
+            </summary>
+        </member>
+        <member name="M:MathParser.Evaluator.Tokenize">
+            <summary>
+            Tokenizes Input into token stream, stored in Lexed
+            </summary>
+        </member>
+        <member name="M:MathParser.Evaluator.Lex(System.String)">
+            <summary>
+            Tokenizes string into token stream
+            </summary>
+            <param name="expression">Expression in string form</param>
+            <returns>Expression as a token stream</returns>
+        </member>
+        <member name="M:MathParser.Evaluator.Parse">
+            <summary>
+            Parses Lexed into a parse tree, stored in ParseTree
+            </summary>
+        </member>
+        <member name="M:MathParser.Evaluator.Parse(MathParser.Lexing.TokenStream)">
+            <summary>
+            Parses token stream into a tree
+            </summary>
+            <param name="stream">TokenStream to parse</param>
+            <returns>Parse tree of expression</returns>
+        </member>
+        <member name="M:MathParser.Evaluator.Calculate">
+            <summary>
+            Evaluates parse tree. Equivalent to <c>ParseTree.GetResult();</c>
+            </summary>
+        </member>
+        <member name="M:MathParser.Evaluator.Calculate(MathParser.ParseTree.NodeBase)">
+            <summary>
+            Evaluates parse tree
+            </summary>
+            <param name="factor">Parse tree to evaluate</param>
+            <returns>Evaluated result of parse tree</returns>
+        </member>
+        <member name="M:MathParser.Evaluator.Evaluate">
+            <summary>
+            Performs all steps of parser at once
+            </summary>
+        </member>
+        <member name="M:MathParser.Evaluator.Evaluate(System.String)">
+            <summary>
+            Performs all steps of parser at once, returning the result
+            </summary>
+            <param name="expression">String form of expression</param>
+            <returns>Result of expression evaluated</returns>
+        </member>
+        <member name="T:MathParser.Extensibility">
+            <summary>
+            Provides options for the extension of this library
+            </summary>
+        </member>
+        <member name="P:MathParser.Extensibility.LoadedExtensions">
+            <summary>
+            List of assemblies used in the extension of this library.
+            Add your assembly to this list for it to extend this library.
+            </summary>
+        </member>
+        <member name="P:MathParser.Extensibility.AllAssemblies">
+            <summary>
+            List of all assemblies loaded by this library, including itself.
+            </summary>
+        </member>
+        <member name="M:MathParser.Extensibility.AddAllAssembliesInPath(System.String)">
+            <summary>
+            Adds all assemblies in a folder to LoadedExtensions.
+            </summary>
+            <param name="folderPath">Full path of folder to load from</param>
+        </member>
+        <member name="T:MathParser.Functions.LibraryList">
+            <summary>
+            Functions relating to lists
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.MaxList(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the maximum value in a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.MinList(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the minimum value in a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.Mean(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the mean value of a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.StandardDeviation(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the standard deviation of a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.RootMeanSquare(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the root-mean-square value of a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.SizeOf(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the size of a list (in elements)
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.Fill(System.Double,System.Int64)">
+            <summary>
+            Creates a new list of a given size, filled with a given value
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryList.CumulativeSum(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns a list containing the cumulative sum of a list over its elements
+            </summary>
+        </member>
+        <member name="T:MathParser.Functions.LibraryNumeric">
+            <summary>
+            Various numeric functions
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.LogarithmN(System.Double,System.Double)">
+            <summary>
+            Returns the base-n logarithm of a number
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.LogarithmE(System.Double)">
+            <summary>
+            Returns the natural (base e) logarithm of a number
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Logarithm(System.Double)">
+            <summary>
+            Returns the base 10 logarithm of a number
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.AbsoluteValue(System.Double)">
+            <summary>
+            Absolute value function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Sign(System.Double)">
+            <summary>
+            Sign (not sine) of a number:
+            -1 if negative, 0 if zero, 1 if positive
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.SquareRoot(System.Double)">
+            <summary>
+            Square root function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.NthRoot(System.Double,System.Double)">
+            <summary>
+            Generic root function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Maximum(System.Double,System.Double)">
+            <summary>
+            Maximum of two values
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Minimum(System.Double,System.Double)">
+            <summary>
+            Minimum of two values
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Constrain(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns a constrained value between a minimum and maximum.
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Random">
+            <summary>
+            Random number between 0 and 1
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.RandomInteger(System.Int32,System.Int32)">
+            <summary>
+            Random integer given a minimum and exclusive maximum
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.IntegralPart(System.Double)">
+            <summary>
+            Returns the integral part of a number (the '3' of 3.86)
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.FractionalPart(System.Double)">
+            <summary>
+            Returns the fractional part of a number (the '.86' part of 3.86)
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.LeastCommonMultiple(System.Int32,System.Int32)">
+            <summary>
+            Returns the least common multiple (LCM) of two values.
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Round(System.Double,System.Int32)">
+            <summary>
+            Rounds a number to the nearest n decimal places
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Ceiling(System.Double)">
+            <summary>
+            Rounds a number up.
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Floor(System.Double)">
+            <summary>
+            Rounds a number down.
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Permutation(System.Int64,System.Int64)">
+            <summary>
+            Permutation function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.Combination(System.Int64,System.Int64)">
+            <summary>
+            Combination function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryNumeric.RandomIntsNoRep(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Random integer list, no repeats. Returns a double
+            as MathType.List only corresponds with lists of doubles.
+            </summary>
+        </member>
+        <member name="T:MathParser.Functions.LibraryString">
+            <summary>
+            Functions involving strings
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryString.Substring(System.String,System.Int32,System.Int32)">
+            <summary>
+            Substring of a given string, given a start index and length
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryString.Help(System.String)">
+            <summary>
+            Provides help on any given function name
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryString.AllFunctions">
+            <summary>
+            Lists all registered functions in a table
+            </summary>
+        </member>
+        <member name="T:MathParser.Functions.LibraryTrig">
+            <summary>
+            Trigonometric functions
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.Sine(System.Double)">
+            <summary>
+            Sine function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.Cosine(System.Double)">
+            <summary>
+            Cosine function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.Tangent(System.Double)">
+            <summary>
+            Tangent function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.Cosecant(System.Double)">
+            <summary>
+            Cosecant function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.Secant(System.Double)">
+            <summary>
+            Secant function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.Cotangent(System.Double)">
+            <summary>
+            Cotangent function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.ArcSine(System.Double)">
+            <summary>
+            Inverse sine function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.ArcCosine(System.Double)">
+            <summary>
+            Inverse cosine function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.LibraryTrig.ArcTangent(System.Double)">
+            <summary>
+            Inverse tangent function
+            </summary>
+        </member>
+        <member name="T:MathParser.Functions.HelpLibrary">
+            <summary>
+            Library for help info on each function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.HelpLibrary.Init(System.Boolean)">
+            <summary>
+            Initializes the help library
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.HelpLibrary.RegisterHelp(System.String,System.String)">
+            <summary>
+            Registers a function for the library
+            </summary>
+            <param name="functionName">Name of function in library</param>
+            <param name="help">Information on function</param>
+        </member>
+        <member name="M:MathParser.Functions.HelpLibrary.RegisterHelp(MathParser.Functions.FunctionInfo,System.String)">
+            <summary>
+            Registers help for a function in the library
+            </summary>
+            <param name="info">FunctionInfo designating function referenced</param>
+            <param name="help">Help info on function</param>
+        </member>
+        <member name="M:MathParser.Functions.HelpLibrary.GetHelp(System.String)">
+            <summary>
+            Gets the help stored for a function name
+            </summary>
+            <param name="functionName">Name of function</param>
+            <returns>Help on given function</returns>
+        </member>
+        <member name="M:MathParser.Functions.HelpLibrary.ListFunctions">
+            <summary>
+            Lists all functions registered in the help library into a big table-like string.
+            </summary>
+        </member>
+        <member name="T:MathParser.Functions.MathFunctionAttribute">
+            <summary>
+            Specifies a method, property, or field to be a function in a library.
+            Requires the containing class to have a FunctionLibraryAttribute applied.
+            </summary>
+        </member>
+        <member name="P:MathParser.Functions.MathFunctionAttribute.Name">
+            <summary>
+            Name of function to be stored in registry
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.MathFunctionAttribute.#ctor(System.String)">
+            <summary>
+            Instantiates a new MathFunctionAttribute
+            </summary>
+        </member>
+        <member name="P:MathParser.Functions.FunctionInfo.ReturnType">
+            <summary>
+            Specifies what type the function returns
+            </summary>
+        </member>
+        <member name="P:MathParser.Functions.FunctionInfo.ArgumentTypes">
+            <summary>
+            List of the types for each argument
+            </summary>
+        </member>
+        <member name="P:MathParser.Functions.FunctionInfo.ArgumentCount">
+            <summary>
+            Number of arguments in the function
+            </summary>
+        </member>
+        <member name="P:MathParser.Functions.FunctionInfo.Name">
+            <summary>
+            Name of the function
+            </summary>
+        </member>
+        <member name="P:MathParser.Functions.FunctionInfo.Function">
+            <summary>
+            Functional type to run for the function
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.FunctionInfo.#ctor(System.Delegate,MathParser.Types.MathType,System.String,MathParser.Types.MathType[])">
+            <summary>
+            Instantiates a new FunctionInfo
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.FunctionInfo.#ctor(System.Delegate)">
+            <summary>
+            Instantiates a new FunctionInfo
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.FunctionInfo.Invoke(MathParser.Types.IResultValue[])">
+            <summary>
+            Runs the code in the function, given the required arguments.
+            </summary>
+            <param name="args">Arguments used by function</param>
+            <returns>The return value once the function completes</returns>
+        </member>
+        <member name="M:MathParser.Functions.FunctionInfo.ToString">
+            <summary>
+            Converts the function to a C-style function declaration
+            </summary>
+        </member>
+        <member name="T:MathParser.Functions.FunctionLibraryAttribute">
+            <summary>
+            Denotes a class to be a library of functions for the language
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.FunctionLibraryAttribute.#ctor">
+            <summary>
+            Instantiates a FunctionLibraryAttribute
+            </summary>
+        </member>
+        <member name="T:MathParser.Functions.FunctionRegistry">
+            <summary>
+            Stores all functions used in 
+            </summary>
+        </member>
+        <member name="M:MathParser.Functions.FunctionRegistry.GetFunction(System.String)">
+            <summary>
+            Gets a loaded function from the registry by name.
+            </summary>
+            <param name="name">Name of function to get</param>
+            <returns>Function with the corresponding name</returns>
+        </member>
+        <member name="M:MathParser.Functions.FunctionRegistry.Init(System.Boolean)">
+            <summary>
+            Initializes the Function registry
+            </summary>
+            <param name="force"></param>
+        </member>
+        <member name="M:MathParser.Functions.FunctionRegistry.RegisterFunction(MathParser.Functions.FunctionInfo)">
+            <summary>
+            Loads a FunctionInfo into the registry
+            </summary>
+            <param name="function">FunctionInfo to load</param>
+        </member>
+        <member name="T:MathParser.Lexing.TokenStream">
+            <summary>
+            Stores tokens in a linear pattern for parsing.
+            Not really a stream.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenStream.Tokens">
+            <summary>
+            Inner storage of tokens
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenStream.Item(System.Int32)">
+            <summary>
+            Gets a token at a given index
+            </summary>
+            <param name="index">Index of token</param>
+            <returns>Token at index</returns>
+        </member>
+        <member name="P:MathParser.Lexing.TokenStream.Index">
+            <summary>
+            Current index in "stream"
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenStream.Count">
+            <summary>
+            Number of tokens in stream
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.#ctor">
+            <summary>
+            Instantiates a new TokenStream object
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.#ctor(System.Collections.Generic.IEnumerable{MathParser.Lexing.Token})">
+            <summary>
+            Instantiates a new TokenStream object
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.#ctor(MathParser.Lexing.Token[])">
+            <summary>
+            Instantiates a new TokenStream object
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.Add(MathParser.Lexing.Token)">
+            <summary>
+            Adds a token to tail of the stream
+            </summary>
+            <param name="tok">Token to add</param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.AddRange(System.Collections.Generic.IEnumerable{MathParser.Lexing.Token})">
+            <summary>
+            Adds tokens to the tail of the stream
+            </summary>
+            <param name="all">Tokens to add</param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.Insert(System.Int32,MathParser.Lexing.Token)">
+            <summary>
+            Inserts a token into the stream
+            </summary>
+            <param name="index">Index to insert at</param>
+            <param name="tok">Token to add</param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.RemoveAt(System.Int32)">
+            <summary>
+            Removes a token at a given index
+            </summary>
+            <param name="index">Index of token to remove</param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.Remove(MathParser.Lexing.Token)">
+            <summary>
+            Removes a token
+            </summary>
+            <param name="rem">Token to remove</param>
+            <returns>True if removal was successful, false otherwise</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.IsEmpty">
+            <summary>
+            Returns whether the stream is empty or not
+            </summary>
+            <returns>True if the stream is empty, false if not</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.Next">
+            <summary>
+            Advances position within stream
+            </summary>
+            <returns>Token at Index</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.Peek(System.Int32)">
+            <summary>
+            Shows next token in stream without advancing Index
+            </summary>
+            <param name="ahead">Number of tokens ahead to look after next</param>
+            <returns>Token peeked at</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.Previous">
+            <summary>
+            Regresses position within stream backward
+            </summary>
+            <returns>Token before Index</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.Reset(System.Int32)">
+            <summary>
+            Resets position of Index to start, or a given index
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.HasNext">
+            <summary>
+            Gets whether there are tokens left in the stream.
+            </summary>
+            <returns>True if there are tokens left, false if not</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.GetEnumerator">
+            <summary>
+            Gets the IEnumerator for the IEnumerable
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenStream.ToString">
+            <summary>
+            Lists the tokens into a string
+            </summary>
+        </member>
+        <member name="T:MathParser.Lexing.Token">
+            <summary>
+            A specific token created from the input string
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.Token.Type">
+            <summary>
+            Type of token
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.Token.Lexeme">
+            <summary>
+            Lexeme containing original string turned into token
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.Token.#ctor(MathParser.Lexing.TokenType,System.String)">
+            <summary>
+            Instantiates a new Token
+            </summary>
+        </member>
+        <member name="T:MathParser.Lexing.Tokenizer">
+            <summary>
+            Class to turn an input string into a token stream,
+            ready to parse
+            </summary>
+        </member>
+        <member name="F:MathParser.Lexing.Tokenizer.Instance">
+            <summary>
+            Singleton instance
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.Tokenizer.Expression">
+            <summary>
+            Input expression
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.Tokenizer.Lexed">
+            <summary>
+            Output token stream
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.Tokenizer.Tokenize">
+            <summary>
+            Converts Expression into a TokenStream, and stores it in Lexed.
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.Tokenizer.TokensToString(System.Collections.Generic.List{MathParser.Lexing.TokenType})">
+            <summary>
+            Lists all token types into a string
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.Tokenizer.Tokenize(System.String)">
+            <summary>
+            Tokenizes statically.
+            </summary>
+            <param name="expression">Expression to tokenize</param>
+            <returns>TokenStream, ready to parse</returns>
+        </member>
+        <member name="T:MathParser.Lexing.TokenType">
+            <summary>
+            Base class for all types of tokens. All classes that extend
+            this are singletons, instantiated via reflection.
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenType.Matches(System.String)">
+            <summary>
+            Returns true if the token matches the given lexeme,
+            for the tokenizer.
+            </summary>
+            <param name="lexeme">Lexeme to check against</param>
+            <returns>True if the this matches the lexeme, false if not</returns>
+        </member>
+        <member name="P:MathParser.Lexing.TokenType.LexerPriority">
+            <summary>
+            Gets the lexer priority of the token. Operators are at 4. Higher numbers are
+            further down in priority.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenType.IgnoreInTree">
+            <summary>
+            Whether to ignore a token of this type when creating the parse tree.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenType.CustomRegistry">
+            <summary>
+            A custom registry, if the TokenType sets the named property Custom
+            in the applied TokenTypeAttribute. Useless otherwise.
+            </summary>
+        </member>
+        <member name="T:MathParser.Lexing.TokenTypeAttribute">
+            <summary>
+            Denotes the class should be instantiated via reflection and loaded into the 
+            token type registry.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeAttribute.TokenName">
+            <summary>
+            ID of token
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeAttribute.Custom">
+            <summary>
+            Whether the TokenType has a custom token registry to load from
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeAttribute.#ctor(System.String)">
+            <summary>
+            Instantiates a TokenTypeAttribute
+            </summary>
+        </member>
+        <member name="T:MathParser.Lexing.TokenTypeLiteral">
+            <summary>
+            Base class for all tokens that represent literal values
+            (except lists)
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeLiteral.LexerPriority">
+            <summary>
+            Priority of token in lexer
+            </summary>
+        </member>
+        <member name="T:MathParser.Lexing.TokenTypeOperator">
+            <summary>
+            Base class from which all operator tokens are derived from
+            </summary>
+        </member>
+        <member name="F:MathParser.Lexing.TokenTypeOperator.PRIORITY">
+            <summary>
+            Lexer priority level for operators. Reference as necessary.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeOperator.StringForm">
+            <summary>
+            String representing the operator itself. "+", for example.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeOperator.LexerPriority">
+            <summary>
+            Value of lexer priority. Defaults to PRIORITY (defined above).
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeOperator.IsRightAssociative">
+            <summary>
+            True if the operator is right-associative
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeOperator.Matches(System.String)">
+            <summary>
+            Returns true if the operator exactly matches the given lexeme.
+            </summary>
+            <param name="lexeme">String to check against the operator</param>
+            <returns>True if the operator matches the lexeme, false if not.</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeOperator.ToString">
+            <summary>
+            Converts the token type to a string.
+            </summary>
+        </member>
+        <member name="T:MathParser.Lexing.TokenTypeRegistry">
+            <summary>
+            Registry where all token types are stored, in the form of a priority list.
+            Generally only handled internally.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeRegistry.HasRegistered">
+            <summary>
+            Gets whether initial registration is completed
+            </summary>
+        </member>
+        <member name="T:MathParser.Lexing.TokenTypeRegistry.RegistryItem">
+            <summary>
+            Class containing registered token type data
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeRegistry.RegistryItem.Token">
+            <summary>
+            Token in datum
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeRegistry.RegistryItem.Priority">
+            <summary>
+            Priority of token in registry
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeRegistry.RegistryItem.Key">
+            <summary>
+            Key used in registry
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.RegistryItem.#ctor(System.String,MathParser.Lexing.TokenType,System.Int32)">
+            <summary>
+            Instantiates a new TokenTypeRegistry.RegistryItem
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.RegistryItem.ToString">
+            <summary>
+            Converts the datum to a string
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeRegistry.Registry">
+            <summary>
+            Inner list of registry items. Avoid referencing directly.
+            </summary>
+        </member>
+        <member name="P:MathParser.Lexing.TokenTypeRegistry.Tokens">
+            <summary>
+            List of all token types registered
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.Get(System.String)">
+            <summary>
+            Gets the token type of a given key
+            </summary>
+            <param name="key">Key to check</param>
+            <returns>Token type for the given key</returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.RegisterTokens(System.Boolean)">
+            <summary>
+            Does initial registration, redoing if specified
+            </summary>
+            <param name="force">Set to true to force re-registration.</param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.Register(System.String,MathParser.Lexing.TokenType,System.Int32)">
+            <summary>
+            Registers a token type with a key and priority
+            </summary>
+            <param name="key">Key stored in registry. Must be unique.</param>
+            <param name="token">TokenType singleton to register</param>
+            <param name="priority">Tokenizer priority of token type</param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.TokensByPriority">
+            <summary>
+            Dictionary of all priorities, each priority mapped to a list
+            of all token types with that priority.
+            </summary>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.TokensByPriority(System.Int32)">
+            <summary>
+            Gets a list of all token types with a given priority.
+            </summary>
+            <param name="priority">Priority level to check</param>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.PriorityOf(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets the priority of a token type.
+            </summary>
+            <param name="token">Token type to check.</param>
+            <returns>
+              Priority of specified token type, -1 if token type is 
+              not found.
+            </returns>
+        </member>
+        <member name="M:MathParser.Lexing.TokenTypeRegistry.KeyOf(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets the key of a token type
+            </summary>
+            <param name="token">Token type to check.</param>
+            <returns>
+              The key used to register the token type, null if no
+              token type is found.
+            </returns>
+        </member>
+        <member name="T:MathParser.LogLevel">
+            <summary>
+            Level of importance of message
+            </summary>
+        </member>
+        <member name="F:MathParser.LogLevel.Debug">
+            <summary>
+            Debugging info, hidden by default
+            </summary>
+        </member>
+        <member name="F:MathParser.LogLevel.Info">
+            <summary>
+            Regular information
+            </summary>
+        </member>
+        <member name="F:MathParser.LogLevel.Warning">
+            <summary>
+            An unusual occurrance has been encountered
+            </summary>
+        </member>
+        <member name="F:MathParser.LogLevel.Error">
+            <summary>
+            An error has been encountered, but can be easily dealt with
+            </summary>
+        </member>
+        <member name="F:MathParser.LogLevel.Fatal">
+            <summary>
+            A fatal error has been encountered, and likely cannot be handled.
+            </summary>
+        </member>
+        <member name="T:MathParser.Logger">
+            <summary>
+            Provides options for logging within the parser
+            </summary>
+        </member>
+        <member name="T:MathParser.Logger.LogEventHandler">
+            <summary>
+            Delegate for handling any logging
+            </summary>
+            <param name="sender">
+              Object sending the log message, 
+              really just here for the design pattern.
+            </param>
+            <param name="e">Arguments of logging</param>
+        </member>
+        <member name="E:MathParser.Logger.OnLog">
+            <summary>
+            Subscribe to this with your preferred method of logging
+            </summary>
+        </member>
+        <member name="F:MathParser.Logger.TOKENIZER">
+            <summary>
+            The message involves the tokenizer
+            </summary>
+        </member>
+        <member name="F:MathParser.Logger.PARSER">
+            <summary>
+            The message involves the parser
+            </summary>
+        </member>
+        <member name="F:MathParser.Logger.EVALUATOR">
+            <summary>
+            The message involves the evaluation
+            </summary>
+        </member>
+        <member name="F:MathParser.Logger.REGISTRY">
+            <summary>
+            The message involves the registry of tokens, parselets, etc.
+            </summary>
+        </member>
+        <member name="P:MathParser.Logger.DebugLogging">
+            <summary>
+            Set to true to show debug messages
+            </summary>
+        </member>
+        <member name="P:MathParser.Logger.DisabledCategories">
+            <summary>
+            Set of all categories disabled. Use DisableLogging() and 
+            EnableLogging() to disable and enable logging for categories.
+            </summary>
+        </member>
+        <member name="M:MathParser.Logger.Log(MathParser.LogLevel,System.String,System.String,System.Object)">
+            <summary>
+            Logs a message
+            </summary>
+            <param name="level">Level of message</param>
+            <param name="category">Category of message</param>
+            <param name="message">Message sent</param>
+            <param name="sender">Object that is sending the message, mostly useless</param>
+        </member>
+        <member name="M:MathParser.Logger.DisableLogging(System.String[])">
+            <summary>
+            Disables logging for categories
+            </summary>
+            <param name="categories">Categories to disable</param>
+        </member>
+        <member name="M:MathParser.Logger.EnableLogging(System.String[])">
+            <summary>
+            Enables logging for disabled categories
+            </summary>
+            <param name="categories"></param>
+        </member>
+        <member name="T:MathParser.LoggerEventArgs">
+            <summary>
+            Contains event arguments for logging
+            </summary>
+        </member>
+        <member name="P:MathParser.LoggerEventArgs.Message">
+            <summary>
+            Message sent to logger
+            </summary>
+        </member>
+        <member name="P:MathParser.LoggerEventArgs.Level">
+            <summary>
+            Level of message
+            </summary>
+        </member>
+        <member name="P:MathParser.LoggerEventArgs.Category">
+            <summary>
+            Category of message
+            </summary>
+        </member>
+        <member name="P:MathParser.LoggerEventArgs.FullText">
+            <summary>
+            Full compiled text of message, for convenience
+            </summary>
+        </member>
+        <member name="M:MathParser.LoggerEventArgs.#ctor(MathParser.LogLevel,System.String,System.String)">
+            <summary>
+            Instantiates a new LoggerEventArgs
+            </summary>
+            <param name="level">Level of message</param>
+            <param name="category">Category of message</param>
+            <param name="message">Message</param>
+        </member>
+        <member name="M:MathParser.LoggerEventArgs.ToString">
+            <summary>
+            Converts the object to a string
+            </summary>
+            <returns>this.FullText</returns>
+        </member>
+        <member name="T:MathParser.ParseTree.NodeBase">
+            <summary>
+            The base class of all nodes that are part of the parse tree.
+            Not necessarily multiplication.
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeBase.Type">
+            <summary>
+            The type the node evaluates to
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeBase.Children">
+            <summary>
+            A list of all nodes contained by the node
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeBase.NodeName">
+            <summary>
+            Gets the name of the node in the syntax tree
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.NodeBase.Evaluate">
+            <summary>
+            Evaluates the node
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.NodeBase.ToDisplayString">
+            <summary>
+            Converts the node to a display-friendly format
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.NodeBase.GetTreeString(System.String)">
+            <summary>
+            Creates a tree showing the extent of the expression, for 
+            debugging purposes. Works via recursion.
+            </summary>
+            <param name="depthSpaces">
+              Depth in the tree, in spaces. Each level of depth 
+              is two spaces.
+            </param>
+            <returns>Resulting string containing the entire parse tree</returns>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorUnary.Operand">
+            <summary>
+            Node the operator is applied to
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorUnary.StringForm">
+            <summary>
+            The string form of the operator, for debugging
+            purposes
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorUnary.NodeName">
+            <summary>
+            Name of node in debug displays
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorUnary.Children">
+            <summary>
+            List of all children of the node
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorUnary.Operator">
+            <summary>
+            Token type used when identifying the operator
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.NodeOperatorUnary.#ctor(MathParser.ParseTree.NodeBase)">
+            <summary>
+            Constructor to inherit
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.NodeOperatorUnary.ToString">
+            <summary>
+            Converts the operator to a string
+            </summary>
+        </member>
+        <member name="T:MathParser.ParseTree.IEvaluatable">
+            <summary>
+            Represents a type that can be evaluated in the parser
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.IEvaluatable.Evaluate">
+            <summary>
+            Evaluates the IEvaluatable
+            </summary>
+            <returns>The result value</returns>
+        </member>
+        <member name="T:MathParser.ParseTree.ITextDisplayable">
+            <summary>
+            Represents a type that has a display-specific string function
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.ITextDisplayable.ToDisplayString">
+            <summary>
+            Gets the display string of the object
+            </summary>
+        </member>
+        <member name="T:MathParser.ParseTree.NodeOperatorBinary">
+            <summary>
+            Base class for binary operator nodes
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorBinary.First">
+            <summary>
+            First term, left-hand side
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorBinary.Second">
+            <summary>
+            Second term, right-hand side
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorBinary.StringForm">
+            <summary>
+            The symbol used in the operator, for debugging
+            purposes.
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorBinary.NodeName">
+            <summary>
+            The name used for the node when debugging
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorBinary.Children">
+            <summary>
+            List of all children of the node.
+            </summary>
+        </member>
+        <member name="P:MathParser.ParseTree.NodeOperatorBinary.Operator">
+            <summary>
+            TokenType used to link token type to operator
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.NodeOperatorBinary.#ctor(MathParser.ParseTree.NodeBase,MathParser.ParseTree.NodeBase)">
+            <summary>
+            Constructor to inherit from
+            </summary>
+        </member>
+        <member name="M:MathParser.ParseTree.NodeOperatorBinary.ToString">
+            <summary>
+            Converts the node to a string
+            </summary>
+        </member>
+        <member name="T:MathParser.Parsing.InfixLoadingEventArgs">
+            <summary>
+            Event arguments for InfixLoadingEvent
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.InfixLoadingEventArgs.Existing">
+            <summary>
+            Dictionary of existing infix parselets
+            </summary>
+        </member>
+        <member name="T:MathParser.Parsing.BinaryInfixRegistry">
+            <summary>
+            Class containing all regular binary operators
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryInfixRegistry.Init">
+            <summary>
+            Initializes and loads binary operators via reflection
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryInfixRegistry.Register(MathParser.Lexing.TokenType,System.Type,MathParser.Parsing.Precedence,System.Boolean)">
+            <summary>
+            Registers a token type for a binary operator
+            </summary>
+            <param name="token">Token type in between operator sides</param>
+            <param name="nodeType">Type of node to register to</param>
+            <param name="precedence">Precedence level of operator</param>
+            <param name="rightAssociative">Whether the operator is right-associative</param>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryInfixRegistry.MakeNode(MathParser.Lexing.TokenType,MathParser.ParseTree.NodeBase,MathParser.ParseTree.NodeBase)">
+            <summary>
+            Creates a node from a token and two sides
+            </summary>
+            <param name="token">Token identifying the operator</param>
+            <param name="left">Left side of operator</param>
+            <param name="right">Right side of operator</param>
+            <returns>Node of the tokens</returns>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryInfixRegistry.Get(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets the inner RegItem for the given token type as key
+            </summary>
+            <param name="key">Key when finding a RegItem</param>
+            <returns>The RegItem for the corresponding key</returns>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryInfixRegistry.GetTokens">
+            <summary>
+            Gets all the tokens in the registry
+            </summary>
+            <returns>A list of all tokens stored in the registry</returns>
+        </member>
+        <member name="T:MathParser.Parsing.BinaryInfixRegistry.RegItem">
+            <summary>
+            Inner class used for the registry for data
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryInfixRegistry.RegItem.NodeType">
+            <summary>
+            Type of the node class for the operator
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryInfixRegistry.RegItem.PrecedenceLevel">
+            <summary>
+            Precedence level of the operator
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryInfixRegistry.RegItem.IsRightAssociative">
+            <summary>
+            Whether the operator is right-associative
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryInfixRegistry.RegItem.#ctor(System.Type,MathParser.Parsing.Precedence,System.Boolean)">
+            <summary>
+            Instantiates a BinaryInfixRegistry.RegItem
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryInfixRegistry.RegItem.ToString">
+            <summary>
+            Simplifies the RegItem to a string
+            </summary>
+        </member>
+        <member name="T:MathParser.Parsing.BinaryOperatorAttribute">
+            <summary>
+            Marks a token as part of a standard binary operator, with
+            the necessary values to describe the operator.
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryOperatorAttribute.TokenInstance">
+            <summary>
+            Instance of token once loaded;
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryOperatorAttribute.NodeType">
+            <summary>
+            Type of the Node class describing the operator. It must
+            inherit from NodeOperatorBinary
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryOperatorAttribute.PrecedenceLevel">
+            <summary>
+            Precedence level of operator
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryOperatorAttribute.IsRightAssociative">
+            <summary>
+            True if the operator is right-associative, false if not.
+            Name this argument to change it.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryOperatorAttribute.#ctor(System.String,System.Type,MathParser.Parsing.Precedence)">
+            <summary>
+            Instantiates a new BinaryOperatorAttribute
+            </summary>
+            <param name="instanceName">Registry name of token</param>
+            <param name="nodeType">
+              Type of node to create when parsing. Must inherit from
+              NodeOperatorBinary.
+            </param>
+            <param name="precedence">Precedence level of operator.</param>
+        </member>
+        <member name="T:MathParser.Parsing.BinaryOperatorParselet">
+            <summary>
+            Parselet for parsing binary operators. 
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryOperatorParselet.PrecedenceLevel">
+            <summary>
+            Precedence level defined by operator
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.BinaryOperatorParselet.RightAssociative">
+            <summary>
+            True if the operator is right-associative, false if not
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryOperatorParselet.#ctor(MathParser.Parsing.Precedence,System.Boolean)">
+            <summary>
+            Instantiates a new BinaryOperatorParselet
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.BinaryOperatorParselet.Parse(MathParser.Parsing.Parser,MathParser.ParseTree.NodeBase,MathParser.Lexing.Token)">
+            <summary>
+            Parses an expression with the parser through recursion
+            </summary>
+            <param name="parser">Parser to continue recursion</param>
+            <param name="left">Already-parsed left side of operator</param>
+            <param name="token">Identifying token for operator</param>
+            <returns></returns>
+        </member>
+        <member name="T:MathParser.Parsing.IInfixParselet">
+            <summary>
+            Interface describing an infix syntax. All syntaxes that
+            involve suffixes, infix operators, or mixfix operators 
+            impelement this interface.
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.IInfixParselet.PrecedenceLevel">
+            <summary>
+            Precedence level of syntax when parsing it
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.IInfixParselet.Parse(MathParser.Parsing.Parser,MathParser.ParseTree.NodeBase,MathParser.Lexing.Token)">
+            <summary>
+            Recursive parse function for the syntax. Call parser.Parse()
+            to continue parsing the next node, and call parser.Consume()
+            to expect a token as part of the syntax.
+            </summary>
+            <param name="parser">Parser object used in recursion</param>
+            <param name="left">Left side of syntax, already parsed</param>
+            <param name="token">Identifying token in parsing</param>
+            <returns>A new node merging all parts of the syntax</returns>
+        </member>
+        <member name="T:MathParser.Parsing.IPrefixParselet">
+            <summary>
+            Interface describing a prefix syntax. All syntaxes that
+            identitfy themselves by their starting token (including parenthesis
+            groups) implement this interface.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.IPrefixParselet.Parse(MathParser.Parsing.Parser,MathParser.Lexing.Token)">
+            <summary>
+            Recursive parse function for the syntax. Call parser.Parse()
+            to continue parsing the next node, and call parser.Consume()
+            to expect a token as part of the syntax.
+            </summary>
+            <param name="parser">Parser used in recursion</param>
+            <param name="token">Identifying token in the parselet</param>
+            <returns>
+              A new node from all the child nodes parsed 
+              by this parselet.
+            </returns>
+        </member>
+        <member name="T:MathParser.Parsing.PostfixOperatorAttribute">
+            <summary>
+            Denotes a token class as a standard postfix operator
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.PostfixOperatorAttribute.TokenInstance">
+            <summary>
+            Singleton instance of identifying token
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.PostfixOperatorAttribute.NodeType">
+            <summary>
+            Type of node the operator creates when parsing. Must
+            inherit from NodeOperatorUnary.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.PostfixOperatorAttribute.#ctor(System.String,System.Type)">
+            <summary>
+            Instantiates a new PostfixOperatorAttribute
+            </summary>
+            <param name="instanceName">Registry name of token</param>
+            <param name="nodeType">
+              Type of node to create. Must inherit from 
+              NodeOperatorUnary.
+            </param>
+        </member>
+        <member name="T:MathParser.Parsing.PostfixOperatorParselet">
+            <summary>
+            Parselet for parsing postfix unary operators
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.PostfixOperatorParselet.PrecedenceLevel">
+            <summary>
+            Precedence level of parselet. Almost always set to
+            Precedence.POSTFIX.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.PostfixOperatorParselet.#ctor(MathParser.Parsing.Precedence)">
+            <summary>
+            Instantiates the parselet for the registry.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.PostfixOperatorParselet.Parse(MathParser.Parsing.Parser,MathParser.ParseTree.NodeBase,MathParser.Lexing.Token)">
+            <summary>
+            Recursive parse function for parselet
+            </summary>
+            <param name="parser">Parser for continued parsing. Ignored.</param>
+            <param name="left">Pre-parsed left side of operator.</param>
+            <param name="token">Identifying token in parselet.</param>
+            <returns></returns>
+        </member>
+        <member name="T:MathParser.Parsing.PrefixLoadEvent">
+            <summary>
+            Used for loading prefix parselets
+            </summary>
+            <param name="sender">Object triggering the load. Mostly useless.</param>
+            <param name="e">EventArgs containing all the required data for load</param>
+        </member>
+        <member name="T:MathParser.Parsing.InfixLoadEvent">
+            <summary>
+            Used for loading infix, postfix, and mixfix parselets
+            </summary>
+            <param name="sender">Object triggering the load. Mostly useless.</param>
+            <param name="e">EventArgs containing all the required data for load</param>
+        </member>
+        <member name="T:MathParser.Parsing.Parser">
+            <summary>
+            Class that does the parsing of a token stream into a parse tree.
+            This is where the important stuff happens.
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.Parser.PrefixParselets">
+            <summary>
+            Registry of loaded prefix parselets
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.Parser.InfixParselets">
+            <summary>
+            Registry of loaded infix/postfix/mixfix parselets
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.Parser.Stream">
+            <summary>
+            Input token stream
+            </summary>
+        </member>
+        <member name="E:MathParser.Parsing.Parser.PrefixLoading">
+            <summary>
+            Event for loading prefix parselets. Subscribe your
+            prefix parselet loading code to this event.
+            </summary>
+        </member>
+        <member name="E:MathParser.Parsing.Parser.InfixLoading">
+            <summary>
+            Event for loading infix/postfix/mixfix parselets.
+            Subscribe your infix/postfix/mixfix parselet loading
+            code to this event.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.#ctor(MathParser.Lexing.TokenStream)">
+            <summary>
+            Instantiates a new PrattParser
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.Parse(MathParser.Lexing.TokenStream)">
+            <summary>
+            Parses a token stream statically with a new instance.
+            </summary>
+            <param name="stream">Stream to parse</param>
+            <returns>A Node containing the entire parse tree of the expression</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.Init(System.Boolean)">
+            <summary>
+            Initialization logic, called on the first instantiation of a Parser object.
+            </summary>
+            <param name="force">Force re-initialization</param>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.RegisterPrefix(MathParser.Lexing.TokenType,MathParser.Parsing.IPrefixParselet)">
+            <summary>
+            Registers a token type to a prefix parselet
+            </summary>
+            <param name="token">Token type to register</param>
+            <param name="parselet">Parselet to register to</param>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.RegisterPrefixOperator(MathParser.Lexing.TokenType)">
+            <summary>
+            Registers a token type to a new PrefixOperatorParselet
+            </summary>
+            <param name="opToken">Token type to register</param>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.RegisterInfix(MathParser.Lexing.TokenType,MathParser.Parsing.IInfixParselet)">
+            <summary>
+            Registers a token type to an infix parselet
+            </summary>
+            <param name="token">Token type to register</param>
+            <param name="parselet">Parselet to register to</param>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.RegisterBinaryOperator(MathParser.Lexing.TokenType,MathParser.Parsing.Precedence,System.Boolean)">
+            <summary>
+            Registers a token type to a new BinaryOperatorParselet
+            </summary>
+            <param name="opToken">Token type to register</param>
+            <param name="precedence">Precedence of operator</param>
+            <param name="rightAssociative">If the operator is right-associative or not</param>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.RegisterPostfixOperator(MathParser.Lexing.TokenType)">
+            <summary>
+            Registers a token type to a new PostfixOperatorParselet
+            </summary>
+            <param name="opToken">Token type to register</param>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.Parse(MathParser.Parsing.Precedence)">
+            <summary>
+            Parses a token stream stored in Stream
+            </summary>
+            <param name="precedence">
+              Precedence level to start at. Used only as 
+              inner part of the algorithm.
+            </param>
+            <returns>Resulting node in tree</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.GetPrefix(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets the prefix parselet registered to the token type
+            </summary>
+            <param name="tokenClass">Token type to check</param>
+            <returns>Parslet the token type is registered to</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.GetInfix(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets the infix parselet registered to the token type
+            </summary>
+            <param name="tokenClass">Token type to check</param>
+            <returns>Parselet the token type is registered to</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.GetPrecedence">
+            <summary>
+            Gets the current precedence in the parser's current state
+            </summary>
+            <returns>The precendence level being parsed</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.Consume(MathParser.Lexing.TokenType)">
+            <summary>
+            Consumes a token as part of parsing
+            </summary>
+            <param name="tokType">Token type to expect</param>
+            <returns>The token consumed</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.Match(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets whether the token stream's current token matches the
+            token type.
+            </summary>
+            <param name="expected">Token type to expect</param>
+            <returns>True if the token matches, false if not</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.Consume">
+            <summary>
+            Consumes the next token unconditionally
+            </summary>
+            <returns>The token consumed</returns>
+        </member>
+        <member name="M:MathParser.Parsing.Parser.LookAhead(System.Int32)">
+            <summary>
+            Peeks a certain number of tokens ahead in the token stream
+            </summary>
+            <param name="distance">Number of tokens to look ahead</param>
+            <returns>Token peeked at</returns>
+        </member>
+        <member name="T:MathParser.Parsing.Precedence">
+            <summary>
+            Used much like an <see cref="T:System.Int32"/>. Explicit conversions 
+            from <see cref="T:System.Int32"/> is acceptable: 
+            <code>Precedence prec = (Precedence)5</code>
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.ASSIGNMENT">
+            <summary>
+            Assignment operators. Unused.
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.CONDITIONAL_TERNARY">
+            <summary>
+            Ternary ?: operator from C
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.CONDITIONAL_OR">
+            <summary>
+            Conditional or || from C
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.CONDITIONAL_AND">
+            <summary>
+            Conditional and &amp;&amp; from C
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.LOGICAL_OR">
+            <summary>
+            Logical or from C. Unused.
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.LOGICAL_XOR">
+            <summary>
+            Logical xor from C. Unused.
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.LOGICAL_AND">
+            <summary>
+            Logical and from C. Unused.
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.EQUALITY">
+            <summary>
+            Equality comparison == or ~=. Returns a boolean.
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.RELATIONAL">
+            <summary>
+            Relational comparison &lt; &lt;= &gt; &gt;=. Returns a boolean.
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.BITSHIFT">
+            <summary>
+            Bitshift operators from C. Unused.
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.ADDITIVE">
+            <summary>
+            Additive operators + -
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.MULTIPLICATIVE">
+            <summary>
+            Multiplicative operators * / %
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.PREFIX">
+            <summary>
+            Prefix operators ~ -
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.POSTFIX">
+            <summary>
+            Postfix operators !
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.EXPONENTIAL">
+            <summary>
+            Exponential operator ^
+            </summary>
+        </member>
+        <member name="F:MathParser.Parsing.Precedence.PRIMARY">
+            <summary>
+            Primary operators such as groups (...), method calls,
+            and ordinal access: [index]
+            </summary>
+        </member>
+        <member name="T:MathParser.Parsing.PrefixLoadingEventArgs">
+            <summary>
+            Event args for PrefixLoadingEvent.
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.PrefixLoadingEventArgs.Existing">
+            <summary>
+            Dictionary of existing prefix parselets.
+            </summary>
+        </member>
+        <member name="T:MathParser.Parsing.PrefixOperatorAttribute">
+            <summary>
+            Denotes a token class as a prefix operator.
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.PrefixOperatorAttribute.TokenInstance">
+            <summary>
+            Singleton instance of identifying token type
+            </summary>
+        </member>
+        <member name="P:MathParser.Parsing.PrefixOperatorAttribute.NodeType">
+            <summary>
+            Type of node the operator creates when parsing. Must inherit from
+            NodeOperatorUnary.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.PrefixOperatorAttribute.#ctor(System.String,System.Type)">
+            <summary>
+            Instantiates a new PrefixOperatorAttribute.
+            </summary>
+            <param name="instanceName">Registry key of identifying token</param>
+            <param name="nodeType">
+              Type of node to create when parsing. Must inherit 
+              from NodeOperatorUnary.
+            </param>
+        </member>
+        <member name="T:MathParser.Parsing.UnaryPostfixRegistry">
+            <summary>
+            Registry of all unary postfix operator parselets
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPostfixRegistry.Init">
+            <summary>
+            Initialization code for the registry.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPostfixRegistry.Register(MathParser.Lexing.TokenType,System.Type)">
+            <summary>
+            Registers a token to a node type
+            </summary>
+            <param name="token">Token to register</param>
+            <param name="nodeType">
+              Node type to register to. Must inherit from 
+              NodeOperatorUnary.
+            </param>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPostfixRegistry.MakeNode(MathParser.Lexing.TokenType,MathParser.ParseTree.NodeBase)">
+            <summary>
+            Creates a node from a token type and operand
+            </summary>
+            <param name="token">Token type identifying the node</param>
+            <param name="operand">Contents of the new node</param>
+            <returns>A new node of the operator type</returns>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPostfixRegistry.Get(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets the type registered for a particular token type
+            </summary>
+            <param name="tokenType">Token type as the key in the registry</param>
+            <returns>Node type stored for the specified TokenType</returns>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPostfixRegistry.GetTokens">
+            <summary>
+            Gets all the token types stored in the registry.
+            </summary>
+            <returns>A list of all token types stored</returns>
+        </member>
+        <member name="T:MathParser.Parsing.UnaryPrefixRegistry">
+            <summary>
+            Registry of all unary prefix operator parselets
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPrefixRegistry.Init">
+            <summary>
+            Initialization code for the registry.
+            </summary>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPrefixRegistry.Register(MathParser.Lexing.TokenType,System.Type)">
+            <summary>
+            Registers a token to a node type
+            </summary>
+            <param name="token">Token to register</param>
+            <param name="nodeType">
+              Node type to register to. Must inherit from 
+              NodeOperatorUnary.
+            </param>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPrefixRegistry.MakeNode(MathParser.Lexing.TokenType,MathParser.ParseTree.NodeBase)">
+            <summary>
+            Creates a node from a token type and operand
+            </summary>
+            <param name="token">Token type identifying the node</param>
+            <param name="operand">Contents of the new node</param>
+            <returns>A new node of the operator type</returns>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPrefixRegistry.Get(MathParser.Lexing.TokenType)">
+            <summary>
+            Gets the type registered for a particular token type
+            </summary>
+            <param name="tokenType">Token type as the key in the registry</param>
+            <returns>Node type stored for the specified TokenType</returns>
+        </member>
+        <member name="M:MathParser.Parsing.UnaryPrefixRegistry.GetTokens">
+            <summary>
+            Gets all the token types stored in the registry.
+            </summary>
+            <returns>A list of all token types stored</returns>
+        </member>
+        <member name="T:MathParser.Types.MathType">
+            <summary>
+            Enum representing all evaluatable types in the library
+            </summary>
+        </member>
+        <member name="F:MathParser.Types.MathType.Real">
+            <summary>
+            A real number. Equivalent to a double.
+            </summary>
+        </member>
+        <member name="F:MathParser.Types.MathType.Integer">
+            <summary>
+            An integer. Equivalent to an int.
+            </summary>
+        </member>
+        <member name="F:MathParser.Types.MathType.String">
+            <summary>
+            A string of text. Equivalent to a string.
+            </summary>
+        </member>
+        <member name="F:MathParser.Types.MathType.Boolean">
+            <summary>
+            A boolean value. Equivalent to a bool.
+            </summary>
+        </member>
+        <member name="F:MathParser.Types.MathType.List">
+            <summary>
+            A list of numbers. Equivalent to a List&lt;double&gt;
+            </summary>
+        </member>
+        <member name="T:MathParser.Types.MathTypes">
+            <summary>
+            Specifies methods involving the conversion between MathType and System.Type.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.MathTypes.ToMathType(System.Type)">
+            <summary>
+            Converts a System.Type to a MathType.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.MathTypes.ToSystemType(MathParser.Types.MathType)">
+            <summary>
+            Converts a MathTYpe to a System.Type.
+            </summary>
+        </member>
+        <member name="T:MathParser.Types.ResultBoolean">
+            <summary>
+            Represents a boolean value
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultBoolean.CoreValue">
+            <summary>
+            Internal object held, storing the result's data
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultBoolean.Value">
+            <summary>
+            Internal bool storing true or false.
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultBoolean.Type">
+            <summary>
+            Type of value stored within the result
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultBoolean.#ctor(System.Boolean)">
+            <summary>
+            Instantiates a new ResultBoolean
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultBoolean.ToDisplayString">
+            <summary>
+            Gets the display string of the object
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultBoolean.ToDouble">
+            <summary>
+            Converts the result to a double.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultBoolean.ToInteger">
+            <summary>
+            Converts the result to an int
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultBoolean.ToBoolean">
+            <summary>
+            Converts the result to a bool
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultBoolean.ToList">
+            <summary>
+            Converts the result to a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultBoolean.ToString">
+            <summary>
+            Converts the result to a string
+            </summary>
+        </member>
+        <member name="T:MathParser.Types.ResultList">
+            <summary>
+            Represents a list of numbers
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultList.Type">
+            <summary>
+            Type of value stored within the result
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultList.CoreValue">
+            <summary>
+            Internal object held, storing the result's data
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultList.Value">
+            <summary>
+            Internal number list stored.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.#ctor(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Instantiates a new ResultList.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.#ctor">
+            <summary>
+            Instantiates a new ResultList.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.#ctor(System.Double[])">
+            <summary>
+            Instantiates a new ResultList.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.ToDouble">
+            <summary>
+            Converts the result to a double.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.ToInteger">
+            <summary>
+            Converts the result to an int
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.ToBoolean">
+            <summary>
+            Converts the result to a bool
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.ToList">
+            <summary>
+            Converts the result to a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.ToDisplayString">
+            <summary>
+            Gets the display string of the object
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultList.ToString">
+            <summary>
+            Converts the result to a string
+            </summary>
+        </member>
+        <member name="T:MathParser.Types.ResultNumberInteger">
+            <summary>
+            Represents an integral value
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultNumberInteger.Type">
+            <summary>
+            Type of value stored within the result
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultNumberInteger.CoreValue">
+            <summary>
+            Internal object held, storing the result's data
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultNumberInteger.Value">
+            <summary>
+            Internal value stored.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.#ctor(System.Int64)">
+            <summary>
+            Instantiates a new ResultNumberInteger
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.#ctor(System.Int32)">
+            <summary>
+            Instantiates a new ResultNumberInteger
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.ToDouble">
+            <summary>
+            Converts the result to a double.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.ToInteger">
+            <summary>
+            Converts the result to an int
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.ToBoolean">
+            <summary>
+            Converts the result to a bool
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.ToList">
+            <summary>
+            Converts the result to a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.ToDisplayString">
+            <summary>
+            Gets the display string of the object
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.ToString">
+            <summary>
+            Converts the result to a string
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberInteger.op_Implicit(MathParser.Types.ResultNumberInteger)~MathParser.Types.ResultNumberReal">
+            <summary>
+            Conversion operator overload to a ResultNumberReal
+            </summary>
+        </member>
+        <member name="T:MathParser.Types.ResultNumberReal">
+            <summary>
+            Represents a real number value
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultNumberReal.Type">
+            <summary>
+            Type of value stored within the result
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultNumberReal.CoreValue">
+            <summary>
+            Internal object held, storing the result's data
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultNumberReal.Value">
+            <summary>
+            Internal floating-point value stored
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.#ctor(System.Double)">
+            <summary>
+            Instantiates a new ResultNumberReal.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.ToDouble">
+            <summary>
+            Converts the result to a double.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.ToInteger">
+            <summary>
+            Converts the result to an int
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.ToBoolean">
+            <summary>
+            Converts the result to a bool
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.ToList">
+            <summary>
+            Converts the result to a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.ToDisplayString">
+            <summary>
+            Gets the display string of the object
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.ToString">
+            <summary>
+            Converts the result to a string
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultNumberReal.op_Explicit(MathParser.Types.ResultNumberReal)~MathParser.Types.ResultNumberInteger">
+            <summary>
+            Conversion operator overload to a ResultNumberInteger. Cast required.
+            </summary>
+        </member>
+        <member name="T:MathParser.Types.ResultString">
+            <summary>
+            Represents a string of characters. Ironically there is
+            no character type in this parser.
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultString.Type">
+            <summary>
+            Type of value stored within the result
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultString.CoreValue">
+            <summary>
+            Internal object held, storing the result's data
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.ResultString.Value">
+            <summary>
+            Internal string stored
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultString.#ctor(System.String)">
+            <summary>
+            Instantiates a new ResultString
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultString.ToDouble">
+            <summary>
+            Converts the result to a double.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultString.ToInteger">
+            <summary>
+            Converts the result to an int
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultString.ToBoolean">
+            <summary>
+            Converts the result to a bool
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultString.ToList">
+            <summary>
+            Converts the result to a list
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultString.ToDisplayString">
+            <summary>
+            Gets the display string of the object
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.ResultString.ToString">
+            <summary>
+            Converts the result to a string
+            </summary>
+        </member>
+        <member name="T:MathParser.Types.IResultValue">
+            <summary>
+            An interface describing a result value that a parse tree can evaluate to.
+            Override Object.ToString() to specify conversion to a string.
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.IResultValue.Type">
+            <summary>
+            Type of value stored within the result
+            </summary>
+        </member>
+        <member name="P:MathParser.Types.IResultValue.CoreValue">
+            <summary>
+            Internal object held, storing the result's data
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.IResultValue.ToDouble">
+            <summary>
+            Converts the result to a double.
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.IResultValue.ToInteger">
+            <summary>
+            Converts the result to an int
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.IResultValue.ToBoolean">
+            <summary>
+            Converts the result to a bool
+            </summary>
+        </member>
+        <member name="M:MathParser.Types.IResultValue.ToList">
+            <summary>
+            Converts the result to a list
+            </summary>
+        </member>
+        <member name="T:MathParser.MismatchedRuleException">
+            <summary>
+            An exception that is due to a syntax rule being broken
+            </summary>
+        </member>
+        <member name="M:MathParser.MismatchedRuleException.#ctor(System.String)">
+            <summary>
+            Instantiates a MismatchedRuleException
+            </summary>
+            <param name="message">Exception message</param>
+        </member>
+        <member name="M:MathParser.MismatchedRuleException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Gets the object data, inherited from CLR type _Exception
+            </summary>
+            <param name="info">Serialization Info</param>
+            <param name="context">Streaming Context</param>
+        </member>
+        <member name="T:MathParser.TextUtils">
+            <summary>
+            Static class containing various text-related extension methods
+            </summary>
+        </member>
+        <member name="M:MathParser.TextUtils.IsWhitespace(System.Char)">
+            <summary>
+            Returns true if a character is a whitespace character
+            </summary>
+            <param name="c">Character to check</param>
+            <returns>True if c is whitespace, false otherwise</returns>
+        </member>
+        <member name="M:MathParser.TextUtils.IsAlphabetic(System.Char)">
+            <summary>
+            Returns true if a character is an alphabetic character
+            </summary>
+            <param name="c">Character to check</param>
+            <returns>True if c is a letter, false otherwise</returns>
+        </member>
+        <member name="M:MathParser.TextUtils.IsNumeric(System.Char)">
+            <summary>
+            Returns true if a character is a numeric character
+            </summary>
+            <param name="c">Character to check</param>
+            <returns>True if c is a digit, false otherwise</returns>
+        </member>
+        <member name="M:MathParser.TextUtils.IsAlphaNumeric(System.Char)">
+            <summary>
+            Returns true if a character is alphanumeric
+            </summary>
+            <param name="c">Character to check</param>
+            <returns>True if c is alphanumeric, false otherwise</returns>
+        </member>
+        <member name="M:MathParser.TextUtils.IsValidVariable(System.String)">
+            <summary>
+            Returns true if a string is a valid c-style identifier
+            </summary>
+            <param name="s">String to check</param>
+            <returns>True if a string is a valid identifier, false otherwise</returns>
+        </member>
+        <member name="T:MathParser.VariableRegistry">
+            <summary>
+            Registry where all variables are stored.
+            </summary>
+        </member>
+        <member name="P:MathParser.VariableRegistry.Instance">
+            <summary>
+            Singleton instance of registry
+            </summary>
+        </member>
+        <member name="P:MathParser.VariableRegistry.Registry">
+            <summary>
+            Inner registry of variables
+            </summary>
+        </member>
+        <member name="P:MathParser.VariableRegistry.Item(System.String)">
+            <summary>
+            Gets the value stored in a variable
+            </summary>
+            <param name="name">Variable name</param>
+            <returns>The value stored in the specified variable</returns>
+        </member>
+        <member name="M:MathParser.VariableRegistry.#ctor">
+            <summary>
+            Instantiates a VariableRegistry
+            </summary>
+        </member>
+        <member name="M:MathParser.VariableRegistry.Get(System.String)">
+            <summary>
+            Gets the value stored in a variable
+            </summary>
+            <param name="varname">Variable name</param>
+            <returns>
+              Value stored in the specified variable, 
+              null if variable does not exist.
+            </returns>
+        </member>
+        <member name="M:MathParser.VariableRegistry.Set(System.String,MathParser.Types.IResultValue)">
+            <summary>
+            Sets a variable to a value
+            </summary>
+            <param name="varname">Variable name</param>
+            <param name="value">Value to set variable to</param>
+        </member>
+        <member name="M:MathParser.VariableRegistry.ContainsVariable(System.String)">
+            <summary>
+            Returns whether a variable exists in the registry.
+            </summary>
+            <param name="varname">Variable to check for</param>
+            <returns>True if the variable exists, false if not</returns>
+        </member>
+        <member name="M:MathParser.VariableRegistry.Create(System.String,MathParser.Types.IResultValue)">
+            <summary>
+            Creates a variable within the registry.
+            </summary>
+            <param name="varname">Name of variable to create.</param>
+            <param name="initialValue">Value and type to initialize to</param>
+        </member>
+    </members>
+</doc>
